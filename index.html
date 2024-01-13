@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Project AVA</title>
+    <link rel="shortcut icon" href="./AVA.png" type="image/x-icon">
+</head>
+<body>
+    <div class="interface">
+        <div class="human-box">
+            <textarea id="voiceCommand" placeholder="Speak your command..." oninput="handleVoiceInput()"></textarea>
+        </div>
+        <div class="ava-box">
+            <p id="responseText"></p>
+        </div>
+    </div>
+
+    <script>
+        let isTyping = false;
+
+        function handleVoiceInput() {
+            isTyping = true;
+            setTimeout(() => {
+                if (isTyping) {
+                    isTyping = false;
+                    askAvamis();
+                }
+            }, 1000);
+        }
+
+    
+        function askAvamis() {
+        var command = document.getElementById('voiceCommand').value;
+        if (command.trim() !== '') {
+            fetch('http://127.0.0.1:5000/ask_avamis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'command=' + encodeURIComponent(command),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('responseText').innerText = data.response;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    }
+    </script>
+</body>
+</html>
